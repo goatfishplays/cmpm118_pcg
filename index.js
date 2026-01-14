@@ -4,25 +4,13 @@ import { stdin as input, stdout as output } from "node:process";
 import { createAgent, tool } from "langchain";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
 import * as z from "zod";
-// import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 import { MemorySaver } from "@langchain/langgraph";
-import { InMemoryChatMessageHistory } from "@langchain/core/chat_history";
 
 // io stuff I think
 const rl = readline.createInterface({
     input,
     output,
 });
-
-// // Per session chat history(idk what this is cause like should just be 1 session???)
-// const histories = {};
-
-// function getHistory(sessionId) {
-//     if (!histories[sessionId]) {
-//         histories[sessionId] = new InMemoryChatMessageHistory();
-//     }
-//     return histories[sessionId];
-// }
 
 const getWeather = tool(
     (input) => `It's always sunny in ${input.city}!`,
@@ -60,19 +48,13 @@ const model = new ChatGoogleGenerativeAI({
 
 });
 
-const checkpointer = new MemorySaver({});
-
+const checkpointer = new MemorySaver();
 const agent = createAgent({
     model,
-    tools: [getWeather],
+    tools: [getWeather, getInventoryItems],
     systemPrompt: "You are a shounen protagonist. Talk with electric energy and enthusiasm!",
     checkpointer,
 });
-// const chatAgent = new RunnableWithMessageHistory({
-//     runnable: agent,
-//     getMessageHistory: getHistory,
-//     inputMessagesKey: "input",
-// });
 
 console.log("Starting chat, type exit to quit\n");
 
@@ -87,10 +69,10 @@ while (true) {
     const response = await agent.invoke(
         // { input: userInput },
         { messages: [{ role: "user", content: userInput }] },
-        { configurable: { thread_id: "terminal-session" } }
+        { configurable: { thread_id: "1" } },
     );
 
-    console.log("\nAI: ", response.content, "\n");
+    console.log("\nAI: ", response.messages.at(-1).content, "\n");
 }
 // console.log(await agent.invoke({
 //     messages: [{ role: "user", content: "Are you ready?" }],
