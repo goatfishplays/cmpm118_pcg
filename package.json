@@ -1,0 +1,18 @@
+{
+  "name": "cmpm115_pcg",
+  "version": "1.0.0",
+  "description": "For assignment doing",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@langchain/core": "^1.1.13",
+    "@langchain/google-genai": "^2.1.8",
+    "@langchain/google-vertexai": "^2.1.8",
+    "langchain": "^1.2.8"
+  }
+}
